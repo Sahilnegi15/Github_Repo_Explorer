@@ -6,7 +6,16 @@ const githubRoutes = require("./Routes");
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173",
+      "https://github-repo-explorer-5z69030h9-sahilnegi15s-projects.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.use("/api/github", githubRoutes);
