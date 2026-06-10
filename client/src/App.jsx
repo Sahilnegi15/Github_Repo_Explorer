@@ -13,7 +13,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [repos, setRepos] = useState([]);
   const [page, setPage] = useState(1);
-
+  const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -26,6 +26,15 @@ function App() {
 
     setRecentSearches(saved);
   }, []);
+  
+  useEffect(() => {
+  const timer = setTimeout(() => {
+    fetchSuggestions(username);
+  }, 400);
+
+  return () => clearTimeout(timer);
+}, [username]);
+
 
   const saveRecentSearch = (name) => {
     const updated = [
@@ -91,12 +100,31 @@ function App() {
     }
   };
 
-  const handleSearch = () => {
-    if (!username.trim()) return;
+  const fetchSuggestions = async (query) => {
+  if (query.trim().length < 2) {
+    setSuggestions([]);
+    return;
+  }
 
-    setPage(1);
-    fetchGithubData(username, 1);
-  };
+  try {
+    const res = await axios.get(
+      `http://localhost:5000/api/github/search/${query}`
+    );
+
+    setSuggestions(res.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+  const handleSearch = () => {
+  if (!username.trim()) return;
+
+  setSuggestions([]); 
+
+  setPage(1);
+  fetchGithubData(username, 1);
+};
 
   const loadMore = () => {
     const nextPage = page + 1;
@@ -149,10 +177,13 @@ function App() {
     <div className="top-row">
       <div className="search-section">
         <SearchBar
-          username={username}
-          setUsername={setUsername}
-          handleSearch={handleSearch}
-        />
+  username={username}
+  setUsername={setUsername}
+  handleSearch={handleSearch}
+  suggestions={suggestions}
+  setSuggestions={setSuggestions}
+  
+/>
       </div>
 
       <div className="recent-section">
@@ -171,7 +202,7 @@ function App() {
       {/* Left Sidebar */}
       <aside className="sidebar">
          
-        <UserProfile user={user} />
+       <UserProfile user={user} />
       </aside>
 
       {/* Right Content */}
@@ -214,10 +245,12 @@ function App() {
           </div>
         )}
 
-        <RepoList
-          repos={sortedRepos}
-          loadMore={loadMore}
-        />
+        {repos.length > 0 && (
+  <RepoList
+    repos={sortedRepos}
+    loadMore={loadMore}
+  />
+)}
 
       </main>
 

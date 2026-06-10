@@ -1,7 +1,8 @@
 function UserProfile({ user }) {
   if (!user) {
-    return (
+     return (
       <div className="profile-card">
+      <h3>Profile</h3>
         <div className="profile-avatar"></div>
 
         <div className="stats">
@@ -15,7 +16,9 @@ function UserProfile({ user }) {
   }
 
   return (
+  
     <div className="profile-card">
+    <h3>Profile </h3>
       <img
         src={user.avatar_url}
         alt={user.login}
@@ -56,6 +59,7 @@ function UserProfile({ user }) {
         <u>View on GitHub</u>
       </a>
     </div>
+    
   );
 }
 

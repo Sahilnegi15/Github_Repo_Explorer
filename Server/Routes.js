@@ -4,6 +4,22 @@ const router = express.Router();
 const githubApi = require("./Service");
 const cache = require("./Cache");
 
+router.get("/search/:query", async (req, res) => {
+  try {
+    const { query } = req.params;
+
+    const response = await githubApi.get(
+      `/search/users?q=${query}&per_page=5`
+    );
+
+    res.json(response.data.items);
+  } catch (error) {
+    res.status(500).json({
+      message: "Failed to fetch suggestions",
+    });
+  }
+});
+
 router.get("/:username", async (req, res) => {
   const { username } = req.params;
   const { page = 1 } = req.query;
