@@ -7,7 +7,7 @@ import UserProfile from "./components/UserProfile";
 import RepoList from "./components/RepoList";
 
 import "./App.css";
-
+const API_URL = import.meta.env.VITE_API_URL;
 function App() {
   const [username, setUsername] = useState("");
   const [user, setUser] = useState(null);
@@ -72,7 +72,7 @@ function App() {
       setError("");
 
       const res = await axios.get(
-        `http://localhost:5000/api/github/${searchUser}?page=${currentPage}`
+        `${API_URL}/api/github/${searchUser}?page=${currentPage}`
       );
 
       setUser(res.data.user);
@@ -108,7 +108,7 @@ function App() {
 
   try {
     const res = await axios.get(
-      `http://localhost:5000/api/github/search/${query}`
+      `${API_URL}/api/github/search/${query}`
     );
 
     setSuggestions(res.data);
